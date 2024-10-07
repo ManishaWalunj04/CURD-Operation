@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit User Profile</title>
+</head>
+<body>
+    <h1>Edit User Profile</h1>
+    <form id="editForm">
+        {% csrf_token %}
+        <label for="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name" value="{{ user_profile.first_name }}" required><br>
+
+        <label for="last_name">Last Name:</label>
+        <input type="text" id="last_name" name="last_name" value="{{ user_profile.last_name }}" required><br>
+
+        <label for="email_id">Email:</label>
+        <input type="email" id="email_id" name="email_id" value="{{ user_profile.email_id }}" required><br>
+
+        <label for="phone_no">Phone Number:</label>
+        <input type="text" id="phone_no" name="phone_no" value="{{ user_profile.phone_no }}" required><br>
+
+        <label for="address">Address:</label>
+        <textarea id="address" name="address" required>{{ user_profile.address }}</textarea><br>
+
+        <button type="submit">Update</button>
+    </form>
+
+    <script>
+        document.getElementById('editForm').onsubmit = async function(e) {
+            e.preventDefault();
+
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            const response = await fetch(window.location.href, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,  // Include the CSRF token
+                },
+                body: JSON.stringify({
+                    first_name: document.getElementById('first_name').value,
+                    last_name: document.getElementById('last_name').value,
+                    email_id: document.getElementById('email_id').value,
+                    phone_no: document.getElementById('phone_no').value,
+                    address: document.getElementById('address').value,
+                }),
+            });
+
+            const result = await response.json();
+            alert(result.message);
+            if (response.ok) {
+                window.location.href = '/';  // Redirect or update UI as needed
+            }
+        };
+    </script>
+</body>
+</html>
